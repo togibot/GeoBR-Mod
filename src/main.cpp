@@ -3,6 +3,9 @@
 
 using namespace geode::prelude;
 
+static constexpr float kPanelWidth = 430.f;
+static constexpr float kPanelHeight = 270.f;
+
 class GeoBRNewsPopup : public CCLayerColor {
 public:
     static GeoBRNewsPopup* create() {
@@ -16,61 +19,62 @@ public:
     }
 
     bool init() {
-        if (!CCLayerColor::initWithColor({0, 0, 0, 150})) {
-            return false;
-        }
+        if (!CCLayerColor::initWithColor({0, 0, 0, 175})) return false;
 
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
-        setContentSize(winSize);
+        auto win = CCDirector::sharedDirector()->getWinSize();
+        setContentSize(win);
         setKeypadEnabled(true);
         setTouchEnabled(true);
 
         auto bg = CCScale9Sprite::create("GJ_square01.png", {0, 0, 80, 80});
-        bg->setContentSize({430, 270});
-        bg->setPosition({winSize.width / 2, winSize.height / 2});
+        bg->setContentSize({kPanelWidth, kPanelHeight});
+        bg->setPosition({win.width / 2, win.height / 2});
         addChild(bg);
 
-        auto title = CCLabelBMFont::create("GEOBR NEWS", "goldFont.fnt");
-        title->setPosition({winSize.width / 2, winSize.height / 2 + 105});
-        title->setScale(0.8f);
+        auto title = CCLabelBMFont::create("NOTÍCIAS GEOBR", "goldFont.fnt");
+        title->setPosition({win.width / 2, win.height / 2 + 101});
+        title->setScale(0.78f);
         addChild(title);
 
-        auto latest = CCLabelBMFont::create(
-            "LATEST\n\n"
-            "• GeoBR Mod is now available!\n"
-            "• Creator Battles are back!\n"
-            "• New GeoBR events are coming soon!\n\n"
-            "Stay tuned for more updates.",
+        auto line = CCScale9Sprite::create("GJ_square02.png");
+        line->setContentSize({330, 2});
+        line->setOpacity(80);
+        line->setPosition({win.width / 2, win.height / 2 + 78});
+        addChild(line);
+
+        auto news = CCLabelBMFont::create(
+            "• O mod GeoBR está disponível!\n"
+            "• Creator Battles estão de volta!\n"
+            "• Novos eventos GeoBR estão chegando!",
             "chatFont.fnt"
         );
-        latest->setAlignment(kCCTextAlignmentCenter);
-        latest->setPosition({winSize.width / 2, winSize.height / 2 + 5});
-        latest->setScale(0.72f);
-        addChild(latest);
+        news->setAlignment(kCCTextAlignmentLeft);
+        news->setPosition({win.width / 2 - 150, win.height / 2 + 15});
+        news->setScale(0.70f);
+        addChild(news);
+
+        auto footer = CCLabelBMFont::create("Fique de olho nas próximas novidades.", "chatFont.fnt");
+        footer->setPosition({win.width / 2, win.height / 2 - 58});
+        footer->setScale(0.55f);
+        footer->setOpacity(190);
+        addChild(footer);
 
         auto closeSprite = CCSprite::createWithSpriteFrameName("GJ_closeBtn_001.png");
-        closeSprite->setScale(0.8f);
-        auto closeButton = CCMenuItemSpriteExtra::create(
-            closeSprite,
-            this,
-            menu_selector(GeoBRNewsPopup::onClose)
+        closeSprite->setScale(0.78f);
+        auto close = CCMenuItemSpriteExtra::create(
+            closeSprite, this, menu_selector(GeoBRNewsPopup::onClose)
         );
 
         auto menu = CCMenu::create();
-        menu->setPosition({winSize.width / 2, winSize.height / 2 - 105});
-        menu->addChild(closeButton);
+        menu->setPosition({win.width / 2, win.height / 2 - 103});
+        menu->addChild(close);
         addChild(menu);
 
         return true;
     }
 
-    void onClose(CCObject*) {
-        removeFromParentAndCleanup(true);
-    }
-
-    void keyBackClicked() override {
-        removeFromParentAndCleanup(true);
-    }
+    void onClose(CCObject*) { removeFromParentAndCleanup(true); }
+    void keyBackClicked() override { removeFromParentAndCleanup(true); }
 };
 
 class GeoBRHubPopup : public CCLayerColor {
@@ -86,65 +90,100 @@ public:
     }
 
     bool init() {
-        if (!CCLayerColor::initWithColor({0, 0, 0, 150})) {
-            return false;
-        }
+        if (!CCLayerColor::initWithColor({0, 0, 0, 170})) return false;
 
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
-        setContentSize(winSize);
+        auto win = CCDirector::sharedDirector()->getWinSize();
+        setContentSize(win);
         setKeypadEnabled(true);
         setTouchEnabled(true);
 
         auto bg = CCScale9Sprite::create("GJ_square01.png", {0, 0, 80, 80});
-        bg->setContentSize({430, 250});
-        bg->setPosition({winSize.width / 2, winSize.height / 2});
+        bg->setContentSize({460, 300});
+        bg->setPosition({win.width / 2, win.height / 2});
         addChild(bg);
 
-        auto title = CCLabelBMFont::create("GEOBR HUB", "goldFont.fnt");
-        title->setPosition({winSize.width / 2, winSize.height / 2 + 90});
-        title->setScale(0.85f);
+        auto title = CCLabelBMFont::create("GEOBR", "goldFont.fnt");
+        title->setPosition({win.width / 2, win.height / 2 + 115});
+        title->setScale(1.0f);
         addChild(title);
 
-        auto subtitle = CCLabelBMFont::create(
-            "COMMUNITY HUB",
-            "chatFont.fnt"
-        );
-        subtitle->setPosition({winSize.width / 2, winSize.height / 2 + 62});
-        subtitle->setScale(0.7f);
+        auto subtitle = CCLabelBMFont::create("CENTRAL DA COMUNIDADE", "chatFont.fnt");
+        subtitle->setPosition({win.width / 2, win.height / 2 + 88});
+        subtitle->setScale(0.62f);
+        subtitle->setOpacity(210);
         addChild(subtitle);
 
+        // Linha divisória do cabeçalho.
+        auto line = CCScale9Sprite::create("GJ_square02.png");
+        line->setContentSize({350, 2});
+        line->setOpacity(85);
+        line->setPosition({win.width / 2, win.height / 2 + 68});
+        addChild(line);
+
+        // Cartão de notícias: o botão usa o mesmo tamanho visual dos botões normais do GD.
         auto newsSprite = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
-        newsSprite->setScale(0.85f);
-        auto newsButton = CCMenuItemSpriteExtra::create(
-            newsSprite,
-            this,
-            menu_selector(GeoBRHubPopup::onNews)
-        );
+        if (newsSprite) {
+            newsSprite->setScale(1.0f);
+            auto newsButton = CCMenuItemSpriteExtra::create(
+                newsSprite, this, menu_selector(GeoBRHubPopup::onNews)
+            );
+            newsButton->setID("news-button"_spr);
 
-        auto newsMenu = CCMenu::create();
-        newsMenu->setPosition({winSize.width / 2, winSize.height / 2 + 5});
-        newsMenu->addChild(newsButton);
-        addChild(newsMenu);
+            auto newsMenu = CCMenu::create();
+            newsMenu->setPosition({win.width / 2 - 118, win.height / 2 + 18});
+            newsMenu->addChild(newsButton);
+            addChild(newsMenu);
 
-        auto newsLabel = CCLabelBMFont::create("NEWS", "bigFont.fnt");
-        newsLabel->setPosition({winSize.width / 2, winSize.height / 2 - 38});
-        newsLabel->setScale(0.55f);
-        addChild(newsLabel);
+            auto newsLabel = CCLabelBMFont::create("NOTÍCIAS", "bigFont.fnt");
+            newsLabel->setPosition({win.width / 2 - 118, win.height / 2 - 35});
+            newsLabel->setScale(0.52f);
+            addChild(newsLabel);
+        }
+
+        // Botões de acesso rápido. Eles ficam visíveis no Update 1 e avisam quando a função ainda está em desenvolvimento.
+        addComingSoonButton(win, "PERFIL", win.width / 2, win.height / 2 + 18);
+        addComingSoonButton(win, "RANKING", win.width / 2 + 118, win.height / 2 + 18);
+
+        auto hint = CCLabelBMFont::create("Mais recursos serão adicionados em breve", "chatFont.fnt");
+        hint->setPosition({win.width / 2, win.height / 2 - 77});
+        hint->setScale(0.52f);
+        hint->setOpacity(175);
+        addChild(hint);
 
         auto closeSprite = CCSprite::createWithSpriteFrameName("GJ_closeBtn_001.png");
-        closeSprite->setScale(0.8f);
-        auto closeButton = CCMenuItemSpriteExtra::create(
-            closeSprite,
-            this,
-            menu_selector(GeoBRHubPopup::onClose)
+        closeSprite->setScale(0.78f);
+        auto close = CCMenuItemSpriteExtra::create(
+            closeSprite, this, menu_selector(GeoBRHubPopup::onClose)
         );
 
         auto closeMenu = CCMenu::create();
-        closeMenu->setPosition({winSize.width / 2, winSize.height / 2 - 90});
-        closeMenu->addChild(closeButton);
+        closeMenu->setPosition({win.width / 2, win.height / 2 - 113});
+        closeMenu->addChild(close);
         addChild(closeMenu);
 
         return true;
+    }
+
+private:
+    void addComingSoonButton(CCSize win, const char* label, float x, float y) {
+        auto sprite = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
+        if (!sprite) return;
+        sprite->setScale(1.0f);
+
+        auto button = CCMenuItemSpriteExtra::create(
+            sprite, this, menu_selector(GeoBRHubPopup::onComingSoon)
+        );
+        button->setUserData(const_cast<char*>(label));
+
+        auto menu = CCMenu::create();
+        menu->setPosition({x, y});
+        menu->addChild(button);
+        addChild(menu);
+
+        auto text = CCLabelBMFont::create(label, "bigFont.fnt");
+        text->setPosition({x, y - 53});
+        text->setScale(0.49f);
+        addChild(text);
     }
 
     void onNews(CCObject*) {
@@ -155,53 +194,46 @@ public:
         }
     }
 
-    void onClose(CCObject*) {
-        removeFromParentAndCleanup(true);
+    void onComingSoon(CCObject*) {
+        FLAlertLayer::create("GeoBR", "Esta função estará disponível em uma próxima atualização.", "OK")->show();
     }
 
-    void keyBackClicked() override {
-        removeFromParentAndCleanup(true);
-    }
+    void onClose(CCObject*) { removeFromParentAndCleanup(true); }
+    void keyBackClicked() override { removeFromParentAndCleanup(true); }
 };
 
 class $modify(GeoBRMenuLayer, MenuLayer) {
     bool init() {
-        if (!MenuLayer::init()) {
-            return false;
-        }
+        if (!MenuLayer::init()) return false;
 
         auto menu = this->getChildByID("bottom-menu");
         if (!menu) {
-            log::warn("GeoBR: bottom-menu was not found");
+            log::warn("GeoBR: bottom-menu não encontrado");
             return true;
         }
 
         auto icon = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
         if (!icon) {
-            log::warn("GeoBR: could not create button sprite");
+            log::warn("GeoBR: não foi possível criar o botão");
             return true;
         }
 
-        icon->setScale(0.8f);
+        // Mesmo tamanho visual dos botões do menu inferior.
+        icon->setScale(1.0f);
 
         auto button = CCMenuItemSpriteExtra::create(
-            icon,
-            this,
-            menu_selector(GeoBRMenuLayer::onGeoBR)
+            icon, this, menu_selector(GeoBRMenuLayer::onGeoBR)
         );
-
-        button->setID("hub-button"_spr);
+        button->setID("geobr-hub-button"_spr);
         menu->addChild(button);
         menu->updateLayout();
 
-        log::info("GeoBR: Hub button loaded");
+        log::info("GeoBR: Hub carregado");
         return true;
     }
 
     void onGeoBR(CCObject*) {
         auto popup = GeoBRHubPopup::create();
-        if (popup) {
-            this->getParent()->addChild(popup, 1000);
-        }
+        if (popup) this->getParent()->addChild(popup, 1000);
     }
 };
