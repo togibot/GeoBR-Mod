@@ -8,8 +8,8 @@
   },
   "id": "geobr.mod",
   "name": "GeoBR",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "developer": "GeoBR Team",
-  "description": "The official GeoBR community hub for Geometry Dash.",
+  "description": "Central da comunidade GeoBR com Hub, Notícias e Creator Hub integrado ao Editor.",
   "repository": "https://github.com/togibot/GeoBR-Mod"
 }
