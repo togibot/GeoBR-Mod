@@ -47,7 +47,22 @@ jobs:
       - uses: geode-sdk/build-geode-mod/combine@main
         id: build
 
+      - name: Prepare easy-to-install files
+        shell: bash
+        run: |
+          mkdir -p geobr-install
+          find "${{ steps.build.outputs.build-output }}" -type f -name '*.geode' -print -exec cp {} geobr-install/ \;
+          echo "GeoBR files:"
+          find geobr-install -maxdepth 1 -type f -name '*.geode' -print
+
       - uses: actions/upload-artifact@v7
         with:
-          name: GeoBR Build Output
+          name: GeoBR Mod - Instalação Fácil
+          path: geobr-install/*.geode
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: GeoBR Build Completa
           path: ${{ steps.build.outputs.build-output }}
+          if-no-files-found: error
