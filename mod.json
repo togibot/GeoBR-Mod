@@ -1,0 +1,15 @@
+{
+  "geode": "v4.8.0",
+  "gd": {
+    "win": "2.2081",
+    "android": "2.2081",
+    "mac": "2.2081",
+    "ios": "2.2081"
+  },
+  "id": "geobr.mod",
+  "name": "GeoBR",
+  "version": "1.0.0",
+  "developer": "GeoBR Team",
+  "description": "The official GeoBR community hub for Geometry Dash.",
+  "repository": "https://github.com/togibot/GeoBR-Mod"
+}
