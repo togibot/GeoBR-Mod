@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "levels": [
+    {
+      "slot": 1,
+      "server_id": 411,
+      "name": "GeoBR Main Level 1",
+      "level_string": ""
+    }
+  ]
+}
