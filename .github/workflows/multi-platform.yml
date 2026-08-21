@@ -4,7 +4,15 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "**"
+      - "main"
+      - "feature/geobr-main-levels"
+  pull_request:
+    branches:
+      - "main"
+      - "feature/geobr-main-levels"
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -30,7 +38,8 @@ jobs:
     runs-on: ${{ matrix.config.os }}
 
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
@@ -39,30 +48,37 @@ jobs:
           target: ${{ matrix.config.target }}
 
   package:
-    name: Package builds
+    name: Package .geode builds
     runs-on: ubuntu-latest
-    needs: ['build']
+    needs: build
 
     steps:
-      - uses: geode-sdk/build-geode-mod/combine@main
+      - name: Combine platform builds
+        uses: geode-sdk/build-geode-mod/combine@main
         id: build
 
-      - name: Prepare easy-to-install files
+      - name: Collect .geode files
         shell: bash
         run: |
+          set -euo pipefail
           mkdir -p geobr-install
           find "${{ steps.build.outputs.build-output }}" -type f -name '*.geode' -print -exec cp {} geobr-install/ \;
-          echo "GeoBR files:"
+          test -n "$(find geobr-install -maxdepth 1 -type f -name '*.geode' -print -quit)"
+          echo "Built GeoBR packages:"
           find geobr-install -maxdepth 1 -type f -name '*.geode' -print
 
-      - uses: actions/upload-artifact@v7
+      - name: Upload .geode files
+        uses: actions/upload-artifact@v4
         with:
-          name: GeoBR Mod - Instalação Fácil
+          name: GeoBR-Main-Levels-V1
           path: geobr-install/*.geode
           if-no-files-found: error
+          retention-days: 14
 
-      - uses: actions/upload-artifact@v7
+      - name: Upload complete build output
+        uses: actions/upload-artifact@v4
         with:
-          name: GeoBR Build Completa
+          name: GeoBR-Main-Levels-V1-complete
           path: ${{ steps.build.outputs.build-output }}
           if-no-files-found: error
+          retention-days: 14
