@@ -1,11 +1,118 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/EditorUI.hpp>
+#include <Geode/modify/LevelSelectLayer.hpp>
 
 using namespace geode::prelude;
 
 static constexpr float kPanelWidth = 430.f;
 static constexpr float kPanelHeight = 270.f;
+
+// ---------------- GeoBR Main Levels V1 ----------------
+// V1 intentionally keeps the list local to the client. No FHGDPS/API
+// connection is required yet.
+class GeoBRMainLevelsPopup : public CCLayerColor {
+public:
+    static GeoBRMainLevelsPopup* create() {
+        auto layer = new GeoBRMainLevelsPopup();
+        if (layer && layer->init()) { layer->autorelease(); return layer; }
+        CC_SAFE_DELETE(layer);
+        return nullptr;
+    }
+
+    bool init() {
+        if (!CCLayerColor::initWithColor({0, 0, 0, 175})) return false;
+        auto win = CCDirector::sharedDirector()->getWinSize();
+        setContentSize(win);
+        setKeypadEnabled(true);
+        setTouchEnabled(true);
+
+        auto bg = CCScale9Sprite::create("GJ_square01.png", {0, 0, 80, 80});
+        bg->setContentSize({kPanelWidth, kPanelHeight});
+        bg->setPosition({win.width / 2, win.height / 2});
+        addChild(bg);
+
+        auto title = CCLabelBMFont::create("GEOBR MAIN LEVELS", "goldFont.fnt");
+        title->setPosition({win.width / 2, win.height / 2 + 95});
+        title->setScale(.78f);
+        addChild(title);
+
+        auto subtitle = CCLabelBMFont::create("VERSION 1", "chatFont.fnt");
+        subtitle->setPosition({win.width / 2, win.height / 2 + 69});
+        subtitle->setScale(.48f);
+        subtitle->setOpacity(180);
+        addChild(subtitle);
+
+        // First V1 placeholder. We will replace this with the real configured
+        // GeoBR Main Level entries after the browser navigation is verified.
+        auto society = CCLabelBMFont::create("SOCIETY", "bigFont.fnt");
+        society->setPosition({win.width / 2, win.height / 2 + 20});
+        society->setScale(.62f);
+        addChild(society);
+
+        auto info = CCLabelBMFont::create("GeoBR Main Levels", "chatFont.fnt");
+        info->setPosition({win.width / 2, win.height / 2 - 18});
+        info->setScale(.52f);
+        info->setOpacity(190);
+        addChild(info);
+
+        auto soon = CCLabelBMFont::create("Level loading will be connected next.", "chatFont.fnt");
+        soon->setPosition({win.width / 2, win.height / 2 - 58});
+        soon->setScale(.48f);
+        soon->setOpacity(155);
+        addChild(soon);
+
+        auto closeSprite = CCSprite::createWithSpriteFrameName("GJ_closeBtn_001.png");
+        closeSprite->setScale(.78f);
+        auto close = CCMenuItemSpriteExtra::create(
+            closeSprite, this, menu_selector(GeoBRMainLevelsPopup::onClose)
+        );
+        auto menu = CCMenu::create();
+        menu->setPosition({win.width / 2, win.height / 2 - 103});
+        menu->addChild(close);
+        addChild(menu);
+        return true;
+    }
+
+    void onClose(CCObject*) { removeFromParentAndCleanup(true); }
+    void keyBackClicked() override { removeFromParentAndCleanup(true); }
+};
+
+class $modify(GeoBRLevelSelectLayer, LevelSelectLayer) {
+    bool init(int page) {
+        if (!LevelSelectLayer::init(page)) return false;
+
+        // Keep the existing GD category buttons untouched. The arrow is an
+        // additional navigation control for the GeoBR page.
+        auto win = CCDirector::sharedDirector()->getWinSize();
+        auto sprite = CCSprite::createWithSpriteFrameName("GJ_arrowBtn_001.png");
+        if (!sprite) {
+            // Some GD builds use a different arrow sprite. Keep the browser
+            // functional if the optional visual asset is unavailable.
+            return true;
+        }
+
+        sprite->setScale(.72f);
+        auto arrow = CCMenuItemSpriteExtra::create(
+            sprite, this, menu_selector(GeoBRLevelSelectLayer::onGeoBRLevels)
+        );
+        arrow->setID("geobr-main-levels-arrow"_spr);
+
+        auto menu = CCMenu::create();
+        menu->setID("geobr-main-levels-navigation"_spr);
+        menu->setPosition({win.width - 35.f, win.height - 42.f});
+        menu->addChild(arrow);
+        addChild(menu, 1000);
+
+        log::info("GeoBR: Main Levels navigation added to Level Browser");
+        return true;
+    }
+
+    void onGeoBRLevels(CCObject*) {
+        auto popup = GeoBRMainLevelsPopup::create();
+        if (popup) getParent()->addChild(popup, 1000);
+    }
+};
 
 class GeoBRNewsPopup : public CCLayerColor {
 public:
