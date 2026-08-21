@@ -43,14 +43,13 @@ public:
         subtitle->setOpacity(180);
         addChild(subtitle);
 
-        // First V1 placeholder. We will replace this with the real configured
-        // GeoBR Main Level entries after the browser navigation is verified.
-        auto society = CCLabelBMFont::create("SOCIETY", "bigFont.fnt");
-        society->setPosition({win.width / 2, win.height / 2 + 20});
-        society->setScale(.62f);
-        addChild(society);
+        // V1 first Main Level.
+        auto level = CCLabelBMFont::create("LOUCURA BRASILEIRA", "bigFont.fnt");
+        level->setPosition({win.width / 2, win.height / 2 + 20});
+        level->setScale(.58f);
+        addChild(level);
 
-        auto info = CCLabelBMFont::create("GeoBR Main Levels", "chatFont.fnt");
+        auto info = CCLabelBMFont::create("GeoBR Main Level #1", "chatFont.fnt");
         info->setPosition({win.width / 2, win.height / 2 - 18});
         info->setScale(.52f);
         info->setOpacity(190);
@@ -82,15 +81,9 @@ class $modify(GeoBRLevelSelectLayer, LevelSelectLayer) {
     bool init(int page) {
         if (!LevelSelectLayer::init(page)) return false;
 
-        // Keep the existing GD category buttons untouched. The arrow is an
-        // additional navigation control for the GeoBR page.
         auto win = CCDirector::sharedDirector()->getWinSize();
         auto sprite = CCSprite::createWithSpriteFrameName("GJ_arrowBtn_001.png");
-        if (!sprite) {
-            // Some GD builds use a different arrow sprite. Keep the browser
-            // functional if the optional visual asset is unavailable.
-            return true;
-        }
+        if (!sprite) return true;
 
         sprite->setScale(.72f);
         auto arrow = CCMenuItemSpriteExtra::create(
@@ -134,8 +127,7 @@ public:
         auto footer = CCLabelBMFont::create("Fique de olho nas proximas novidades.", "chatFont.fnt");
         footer->setPosition({win.width/2,win.height/2-58}); footer->setScale(.55f); footer->setOpacity(190); addChild(footer);
         auto closeSprite = CCSprite::createWithSpriteFrameName("GJ_closeBtn_001.png"); closeSprite->setScale(.78f);
-        auto close = CCMenuItemSpriteExtra::create(closeSprite,this,menu_selector(GeoBRNewsPopup::onClose));
-        auto menu=CCMenu::create(); menu->setPosition({win.width/2,win.height/2-103}); menu->addChild(close); addChild(menu);
+        auto close = CCMenuItemSpriteExtra::create(closeSprite,this,menu_selector(GeoBRNewsPopup::onClose)); auto menu=CCMenu::create(); menu->setPosition({win.width/2,win.height/2-103}); menu->addChild(close); addChild(menu);
         return true;
     }
     void onClose(CCObject*) { removeFromParentAndCleanup(true); }
@@ -214,21 +206,14 @@ class $modify(GeoBRMenuLayer, MenuLayer){
     void onGeoBR(CCObject*){auto p=GeoBRHubPopup::create();if(p)this->getParent()->addChild(p,1000);}
 };
 
-class $modify(GeoBREditorUI, EditorUI){
+class $modify(GeoBREditorUI,EditorUI){
     bool init(LevelEditorLayer* editorLayer){
         if(!EditorUI::init(editorLayer)) return false;
-
-        auto button = createGeoBRGButton(this, menu_selector(GeoBREditorUI::onGeoBR), .55f);
-        if (!button) return true;
+        auto button=createGeoBRGButton(this,menu_selector(GeoBREditorUI::onGeoBR),.55f);
+        if(!button)return true;
         button->setID("geobr-editor-hub"_spr);
-
-        auto menu = CCMenu::create();
-        menu->setID("geobr-editor-menu"_spr);
-        menu->setPosition({CCDirector::sharedDirector()->getWinSize().width - 42.f, 42.f});
-        menu->addChild(button);
-        this->addChild(menu, 1000);
-        log::info("GeoBR: Creator Hub button added to Editor");
-        return true;
+        auto menu=CCMenu::create(); menu->setID("geobr-editor-menu"_spr); menu->setPosition({CCDirector::sharedDirector()->getWinSize().width-42.f,42.f}); menu->addChild(button); this->addChild(menu,1000);
+        log::info("GeoBR: Creator Hub button added to Editor"); return true;
     }
     void onGeoBR(CCObject*){auto p=GeoBRCreatorHubPopup::create();if(p)this->getParent()->addChild(p,1000);}
 };
