@@ -1,5 +1,6 @@
 {
   "geode": "5.7.1",
+  "early-load": true,
   "gd": {
     "win": "2.2081",
     "android": "2.2081",
@@ -8,8 +9,8 @@
   },
   "id": "geobr.mod",
   "name": "GeoBR",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "developer": "GeoBR Team",
-  "description": "Central da comunidade GeoBR com Hub, Notícias e Creator Hub integrado ao Editor.",
+  "description": "Central da comunidade GeoBR com Hub, Noticias, Creator Hub e suporte a GeoBR Main Levels.",
   "repository": "https://github.com/togibot/GeoBR-Mod"
 }
